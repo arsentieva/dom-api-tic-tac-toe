@@ -6,7 +6,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
   const board = document.getElementById("tic-tac-toe-board");
   board.addEventListener("click", (event) => {
-    if (event.target.id === "X" || event.target.id === "O") {
+    if (event.target.id === "X" || event.target.id === "O" || gameWon) {
       return;
     }
     if (currentPlayer === "X") {
@@ -18,6 +18,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
       checkStatus();
       currentPlayer = "X";
     }
+    console.log(gameWon);
   });
 
   function createImage(path, id) {
@@ -33,9 +34,17 @@ window.addEventListener("DOMContentLoaded", (event) => {
     let index = box.charAt(box.length - 1);
     boardSymbols[index] = currentPlayer;
     console.log(boardSymbols);
-    rowCheck(boardSymbols);
-    columnsCheck(boardSymbols);
-    diagonalCheck(boardSymbols);
+    boardCheck();
+  }
+
+  function boardCheck() {
+    if (boardFull(boardSymbols)) {
+      gameWon = undefined;
+    } else {
+      rowCheck(boardSymbols);
+      columnsCheck(boardSymbols);
+      diagonalCheck(boardSymbols);
+    }
   }
 
   function rowCheck(array) {
@@ -76,10 +85,20 @@ window.addEventListener("DOMContentLoaded", (event) => {
   }
 
   function checkStatus() {
-    if (gameWon) {
-      let h1 = document.getElementById("game-status");
-      let status = `Player ${currentPlayer} won`;
-      h1.innerHTML = status;
+    let h1 = document.getElementById("game-status");
+    let status = "";
+    if (gameWon === undefined) {
+      status = "Winner: NONE";
+    } else if (gameWon) {
+      status = `Player ${currentPlayer} Won!!!`;
     }
+    h1.innerHTML = status;
+  }
+  function boardFull(array) {
+    let isFull = array.every(function (index) {
+      return index !== "";
+    });
+    console.log(isFull);
+    return isFull;
   }
 });
