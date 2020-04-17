@@ -6,6 +6,65 @@ let newGameBtn = document.getElementsByTagName("button")[0];
 newGameBtn.id = "new-game";
 let giveUpBtn = document.getElementsByTagName("button")[1];
 giveUpBtn.id = "give-up";
+const storageKey = "tic-tac-name";
+
+const backUp = {
+  lastPlayer: "",
+  board: [],
+  storePlayer: function (player) {
+    this.lastPlayer = player;
+    return this.lastPlayer;
+  },
+  storeBoard: function (array) {
+    this.board = array.slice(0);
+    return this.board;
+  },
+};
+
+//make a variable to hold and object
+//the object should be a place holder for the important game variables
+//that we need to import after a page refresh.
+//we will hold that object in a function called saveGame()
+//saveGame() is going to be invoked when the game state changes
+//we will only load the game if the object is not null or undefined
+
+// function saveGame() {
+//   const state = {
+//     currentPlayer,
+//     boardSymbols,
+//     gameWon,
+//     isFull,
+//     inProgress,
+//   };
+//   localStorage.setItem(keyName, JSON.stringify(state));
+// }
+loadSavedGame();
+
+function storeProgress() {
+  console.log("This was invoked");
+  backUp.storePlayer(currentPlayer);
+  backUp.storeBoard(boardSymbols);
+  console.log(backUp);
+  localStorage.setItem(storageKey, JSON.stringify(backUp));
+}
+
+function loadSavedGame() {
+  const savedGame = localStorage.getItem(storageKey);
+  console.log(savedGame);
+  if (savedGame === null) {
+    intialState();
+  } else {
+    const restoredGame = JSON.parse(savedGame);
+    console.log(restoredGame);
+    //set the board to the restoredGame obj
+    //function restoreBoard()
+    boardSymbols = restoredGame.board;
+    // console.log(boardSymbols);
+    boardSymbols.forEach((el) => {
+      // createImage();
+    });
+  }
+}
 
 function intialState() {
   currentPlayer = "X";
@@ -24,22 +83,26 @@ window.addEventListener("DOMContentLoaded", (event) => {
     if (event.target.id === "X" || event.target.id === "O" || gameWon) {
       return;
     }
-    if (currentPlayer === "X") {
-      createImage("./image/player-x.svg", event.target.id);
-      checkStatus();
-      currentPlayer = "O";
-    } else {
-      createImage("./image/player-o.svg", event.target.id);
-      checkStatus();
-      currentPlayer = "X";
-    }
-
+    createImage(event.target.id);
+    checkStatus();
     toggleNewGameBntStatus();
     toggleGiveUpBtnStatus();
+    // saveGame();
+    storeProgress();
+    updatePlayer();
   });
 
-  function createImage(path, id) {
+  function updatePlayer() {
+    if (currentPlayer === "X") {
+      currentPlayer = "O";
+    } else {
+      currentPlayer = "X";
+    }
+  }
+
+  function createImage(id) {
     const img = document.createElement("img");
+    let path = `./image/player-${currentPlayer.toLowerCase()}.svg`;
     img.setAttribute("src", path);
     img.setAttribute("id", currentPlayer);
     let targetDiv = document.getElementById(id);
@@ -51,6 +114,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     let index = div.charAt(div.length - 1);
     boardSymbols[index] = currentPlayer;
     inProgress = true;
+    // saveGame();
     boardCheck();
   }
 
@@ -145,6 +209,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
       }
     });
     toggleNewGameBntStatus();
+    // saveGame();
   }
   newGameBtn.addEventListener("click", resetBoard);
 
@@ -158,6 +223,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     toggleNewGameBntStatus();
     inProgress = false;
     toggleGiveUpBtnStatus();
+    // saveGame();
   }
 
   giveUpBtn.addEventListener("click", giveUp);
