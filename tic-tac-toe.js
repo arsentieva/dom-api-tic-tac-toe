@@ -1,11 +1,20 @@
 let h1 = document.getElementById("game-status");
 const board = document.getElementById("tic-tac-toe-board");
 
+//get the first button by the "button" tag
+let newGameBtn = document.getElementsByTagName("button")[0];
+newGameBtn.id = "new-game";
+let giveUpBtn = document.getElementsByTagName("button")[1];
+giveUpBtn.id = "give-up";
+
 function intialState() {
   currentPlayer = "X";
   boardSymbols = ["", "", "", "", "", "", "", "", ""];
   gameWon = false;
   h1.innerHTML = "";
+  giveUpBtn.disabled = true;
+  isFull = false;
+  inProgress = false;
 }
 
 intialState();
@@ -24,8 +33,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
       checkStatus();
       currentPlayer = "X";
     }
-    // console.log(gameWon);
-    handleNewGameBtn();
+
+    toggleNewGameBntStatus();
+    toggleGiveUpBtnStatus();
   });
 
   function createImage(path, id) {
@@ -40,7 +50,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
   function populateBoardSymbols(div) {
     let index = div.charAt(div.length - 1);
     boardSymbols[index] = currentPlayer;
-    // console.log(boardSymbols);
+    inProgress = true;
     boardCheck();
   }
 
@@ -101,28 +111,32 @@ window.addEventListener("DOMContentLoaded", (event) => {
     h1.innerHTML = status;
   }
   function boardFull(array) {
-    let isFull = array.every(function (index) {
+    isFull = array.every(function (index) {
       return index !== "";
     });
     return isFull;
   }
 
-  function handleNewGameBtn() {
-    //get the first button by the "button" tag
-    let newGameBtn = document.getElementsByTagName("button")[0];
-    newGameBtn.id = "new-game";
-
+  function toggleNewGameBntStatus() {
     if (gameWon === undefined || gameWon) {
       newGameBtn.disabled = false;
     } else {
       newGameBtn.disabled = true;
     }
   }
-  handleNewGameBtn();
+  toggleNewGameBntStatus();
 
-  const reset = document.getElementById("new-game");
+  function toggleGiveUpBtnStatus() {
+    if (inProgress) {
+      giveUpBtn.disabled = false;
+    } else {
+      giveUpBtn.disabled = true;
+    }
+  }
+
   function resetBoard() {
     intialState();
+
     const squareDivs = document.querySelectorAll(".square ");
     squareDivs.forEach((div) => {
       let child = div.firstChild;
@@ -130,7 +144,21 @@ window.addEventListener("DOMContentLoaded", (event) => {
         div.removeChild(child);
       }
     });
-    handleNewGameBtn();
+    toggleNewGameBntStatus();
   }
-  reset.addEventListener("click", resetBoard);
+  newGameBtn.addEventListener("click", resetBoard);
+
+  function giveUp() {
+    gameWon = true;
+    let winner = "X";
+    if (currentPlayer === "X") {
+      winner = "O";
+    }
+    h1.innerHTML = "Winner is : " + winner;
+    toggleNewGameBntStatus();
+    inProgress = false;
+    toggleGiveUpBtnStatus();
+  }
+
+  giveUpBtn.addEventListener("click", giveUp);
 });
