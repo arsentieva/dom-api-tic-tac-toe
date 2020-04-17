@@ -18,7 +18,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
       checkStatus();
       currentPlayer = "X";
     }
-    console.log(gameWon);
+    // console.log(gameWon);
+    handleNewGameBtn();
   });
 
   function createImage(path, id) {
@@ -33,7 +34,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
   function populateBoardSymbols(box) {
     let index = box.charAt(box.length - 1);
     boardSymbols[index] = currentPlayer;
-    console.log(boardSymbols);
+    // console.log(boardSymbols);
     boardCheck();
   }
 
@@ -98,7 +99,47 @@ window.addEventListener("DOMContentLoaded", (event) => {
     let isFull = array.every(function (index) {
       return index !== "";
     });
-    console.log(isFull);
     return isFull;
   }
+
+  function handleNewGameBtn() {
+    //get the first button by the "button" tag
+    let newGameBtn = document.getElementsByTagName("button")[0];
+    newGameBtn.id = "new-game";
+
+    if (gameWon === undefined || gameWon) {
+      newGameBtn.disabled = false;
+    } else {
+      newGameBtn.disabled = true;
+    }
+  }
+  handleNewGameBtn();
+
+  // function clearBoard(event) {
+  //   console.log("click from clear");
+  //   const reset = document.getElementById("new-game");
+  //   console.log(reset);
+  //   reset.addEventListener("click", (event) => {
+  //     console.log("click with in the button event");
+  //     boardSymbols = ["", "", "", "", "", "", "", "", ""];
+  //     console.log("here in clearBoard");
+  //   });
+  //   console.log(boardSymbols);
+  // }
+  // const actions = document.querySelector(".actions");
+  // console.log("click from actions");
+  // actions.addEventListener("click", (event) => {
+  //   clearBoard(event);
+  // });
+
+  const reset = document.getElementById("new-game");
+  function resetBoard() {
+    boardSymbols = ["", "", "", "", "", "", "", "", ""];
+  }
+  reset.addEventListener("click", resetBoard);
+
+  //
+  //now we need a function to reset the board
+  //listening for event on button with id new-game
+  //we can access that event.target.id
 });
