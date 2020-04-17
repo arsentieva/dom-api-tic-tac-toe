@@ -1,10 +1,16 @@
-window.addEventListener("DOMContentLoaded", (event) => {
-  //   let counter = 0;
-  let currentPlayer = "X";
-  let boardSymbols = ["", "", "", "", "", "", "", "", ""];
-  let gameWon = false;
+let h1 = document.getElementById("game-status");
+const board = document.getElementById("tic-tac-toe-board");
 
-  const board = document.getElementById("tic-tac-toe-board");
+function intialState() {
+  currentPlayer = "X";
+  boardSymbols = ["", "", "", "", "", "", "", "", ""];
+  gameWon = false;
+  h1.innerHTML = "";
+}
+
+intialState();
+
+window.addEventListener("DOMContentLoaded", (event) => {
   board.addEventListener("click", (event) => {
     if (event.target.id === "X" || event.target.id === "O" || gameWon) {
       return;
@@ -31,8 +37,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
     targetDiv.appendChild(img);
   }
 
-  function populateBoardSymbols(box) {
-    let index = box.charAt(box.length - 1);
+  function populateBoardSymbols(div) {
+    let index = div.charAt(div.length - 1);
     boardSymbols[index] = currentPlayer;
     // console.log(boardSymbols);
     boardCheck();
@@ -86,7 +92,6 @@ window.addEventListener("DOMContentLoaded", (event) => {
   }
 
   function checkStatus() {
-    let h1 = document.getElementById("game-status");
     let status = "";
     if (gameWon === undefined) {
       status = "Winner: NONE";
@@ -115,31 +120,17 @@ window.addEventListener("DOMContentLoaded", (event) => {
   }
   handleNewGameBtn();
 
-  // function clearBoard(event) {
-  //   console.log("click from clear");
-  //   const reset = document.getElementById("new-game");
-  //   console.log(reset);
-  //   reset.addEventListener("click", (event) => {
-  //     console.log("click with in the button event");
-  //     boardSymbols = ["", "", "", "", "", "", "", "", ""];
-  //     console.log("here in clearBoard");
-  //   });
-  //   console.log(boardSymbols);
-  // }
-  // const actions = document.querySelector(".actions");
-  // console.log("click from actions");
-  // actions.addEventListener("click", (event) => {
-  //   clearBoard(event);
-  // });
-
   const reset = document.getElementById("new-game");
   function resetBoard() {
-    boardSymbols = ["", "", "", "", "", "", "", "", ""];
+    intialState();
+    const squareDivs = document.querySelectorAll(".square ");
+    squareDivs.forEach((div) => {
+      let child = div.firstChild;
+      if (child) {
+        div.removeChild(child);
+      }
+    });
+    handleNewGameBtn();
   }
   reset.addEventListener("click", resetBoard);
-
-  //
-  //now we need a function to reset the board
-  //listening for event on button with id new-game
-  //we can access that event.target.id
 });
